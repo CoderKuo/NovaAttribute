@@ -1,0 +1,10 @@
+// 吸血属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (吸血比例)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (attrValue > 0 && ctx.getDamage() > 0) {
+        var healAmount = ctx.getDamage() * attrValue
+        safeHeal(attacker, healAmount)
+    }
+}

@@ -1,0 +1,356 @@
+# NovaAttribute 默认属性定义
+#
+# 全局Lore匹配：自动根据属性 name（去色后）匹配Lore行
+# 例如 name: "§c物理攻击" 自动匹配 "物理攻击: 100"、"物理攻击: +100万" 等
+# 无需为每个属性单独写正则，特殊格式可用 lore-pattern 覆盖
+#
+# 支持的Lore格式:
+#   属性名: 100          固定值
+#   属性名: +100         带正号
+#   属性名: (+100)       带括号
+#   属性名: 10%          百分比（需配合 lore-divisor）
+#   属性名: 100~200      范围值
+#   属性名: +100(+10%)   基础值 + 百分比加成
+#   属性名: 100万         带单位后缀
+
+attributes:
+
+  # ====== 攻击属性 ======
+
+  physical_damage:
+    name: "§c物理攻击"
+    default: 1.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  magic_damage:
+    name: "§9魔法攻击"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  true_damage:
+    name: "§4真实伤害"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 1.5
+
+  attack_speed:
+    name: "§e攻击速度"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 0.5
+
+  # ====== 穿透属性 ======
+
+  armor_penetration:
+    name: "§6物理穿透"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.5
+
+  magic_penetration:
+    name: "§5魔法穿透"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.5
+
+  ignore_dodge:
+    name: "§6无视闪避"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  # ====== 防御属性 ======
+
+  physical_defense:
+    name: "§a物理防御"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 0.8
+
+  magic_defense:
+    name: "§b魔法抗性"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 0.8
+
+  damage_reduction:
+    name: "§a伤害减免"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: DEFENSE
+    script: damage_reduction
+    priority: 40
+    combat-power: 2.5
+
+  block_chance:
+    name: "§f格挡几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: DEFENSE
+    script: block
+    priority: 5
+    combat-power: 2.0
+    messages:
+      attacker: "§7对方格挡了你的攻击！"
+      victim: "§a你格挡了攻击！"
+
+  block_rate:
+    name: "§f格挡减伤"
+    default: 0.5
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  toughness:
+    name: "§b韧性"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: DEFENSE
+    script: toughness
+    priority: 15
+    combat-power: 1.5
+
+  knockback_resistance:
+    name: "§8击退抗性"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 0.3
+
+  # ====== 生命属性 ======
+
+  max_health:
+    name: "§c最大生命"
+    default: 20.0
+    trigger: PASSIVE
+    combat-power: 0.5
+
+  health_regen:
+    name: "§a生命恢复"
+    default: 0.0
+    trigger: PERIODIC
+    script: health_regen
+    interval: 60
+    combat-power: 0.3
+
+  # ====== 暴击属性 ======
+
+  critical_chance:
+    name: "§6暴击几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: critical
+    priority: 10
+    combat-power: 2.0
+
+  critical_damage:
+    name: "§6暴击伤害"
+    default: 0.5
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.5
+
+  # ====== 闪避属性 ======
+
+  dodge:
+    name: "§f闪避几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: DEFENSE
+    script: dodge
+    priority: 0
+    combat-power: 3.0
+    messages:
+      attacker: "§7对方闪避了你的攻击！"
+      victim: "§a你闪避了攻击！"
+
+  # ====== 吸血属性 ======
+
+  lifesteal:
+    name: "§4吸血"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: lifesteal
+    priority: 90
+    combat-power: 2.0
+
+  # ====== 反伤属性 ======
+
+  thorns:
+    name: "§d反伤"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: DEFENSE
+    script: thorns
+    priority: 50
+    combat-power: 2.0
+    messages:
+      attacker: "§c对方的反伤让你受到了伤害！"
+      victim: "§a你的反伤反弹了部分伤害！"
+
+  # ====== 状态触发属性 ======
+
+  ignite_chance:
+    name: "§c点燃几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: ignite
+    priority: 20
+    combat-power: 1.0
+
+  poison_chance:
+    name: "§2中毒几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: poison
+    priority: 20
+    combat-power: 1.0
+
+  wither_chance:
+    name: "§8凋零几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: wither_effect
+    priority: 20
+    combat-power: 1.2
+
+  slow_chance:
+    name: "§b减速几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: slow
+    priority: 20
+    combat-power: 0.8
+
+  blind_chance:
+    name: "§8失明几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: blind
+    priority: 20
+    combat-power: 1.0
+
+  lightning_chance:
+    name: "§e雷击几率"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: ATTACK
+    script: lightning
+    priority: 20
+    combat-power: 1.5
+
+  # ====== 击退属性 ======
+
+  knockback:
+    name: "§c击退强度"
+    default: 0.0
+    trigger: ATTACK
+    script: knockback_enhance
+    priority: 30
+    combat-power: 0.5
+
+  # ====== PVP/PVE 属性 ======
+
+  pvp_damage_bonus:
+    name: "§cPVP伤害加成"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 2.0
+
+  pve_damage_bonus:
+    name: "§aPVE伤害加成"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  # ====== 击杀属性 ======
+
+  kill_heal:
+    name: "§c击杀回血"
+    default: 0.0
+    trigger: KILL
+    script: kill_heal
+    priority: 95
+    combat-power: 0.5
+
+  exp_bonus:
+    name: "§e经验加成"
+    default: 0.0
+    trigger: KILL
+    script: exp_bonus
+    priority: 95
+    combat-power: 0.3
+
+  # ====== 元素伤害 ======
+
+  fire_damage:
+    name: "§c火焰伤害"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  fire_resistance:
+    name: "§c火焰抗性"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 0.8
+
+  ice_damage:
+    name: "§b冰霜伤害"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  ice_resistance:
+    name: "§b冰霜抗性"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 0.8
+
+  lightning_damage:
+    name: "§e雷电伤害"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  lightning_resistance:
+    name: "§e雷电抗性"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 0.8
+
+  poison_damage:
+    name: "§2毒素伤害"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  poison_resistance:
+    name: "§2毒素抗性"
+    default: 0.0
+    trigger: PASSIVE
+    combat-power: 0.8
+
+  # ====== 移动属性 ======
+
+  movement_speed:
+    name: "§b移动速度"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 0.2

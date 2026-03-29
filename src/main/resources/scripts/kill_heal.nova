@@ -1,0 +1,9 @@
+// 击杀回血属性脚本
+// 触发类型: KILL
+// 参数: attacker, victim, ctx, attrValue (回血量)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (attrValue > 0) {
+        safeHeal(attacker, attrValue)
+    }
+}

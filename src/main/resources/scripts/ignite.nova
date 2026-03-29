@@ -1,0 +1,9 @@
+// 点燃属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (点燃几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (chance(attrValue)) {
+        setFire(victim, 60)
+    }
+}

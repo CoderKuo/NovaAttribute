@@ -1,0 +1,13 @@
+// 元素之力词条脚本
+// 根据捕获的元素名称动态决定属性ID
+// groups.get(0) = 元素名, groups.get(1) = 等级
+
+fun resolve(result, groups) {
+    var element = groups.get(0)
+    var level = toNumber(groups.get(1))
+    var attrId = if (element == "火焰") { "fire_damage" }
+        else if (element == "冰霜") { "ice_damage" }
+        else if (element == "雷电") { "lightning_damage" }
+        else { "poison_damage" }
+    result.set(attrId, level * 15)
+}

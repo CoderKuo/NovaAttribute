@@ -1,0 +1,9 @@
+// 中毒属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (中毒几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (chance(attrValue)) {
+        applyEffect(victim, "POISON", 60, 0)
+    }
+}

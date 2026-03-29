@@ -1,0 +1,41 @@
+// NovaAttribute 内嵌条件脚本
+// 评估单属性行的激活条件
+//
+// 参数:
+//   entity   - 持有者 (LivingEntity)
+//   text     - 条件文本 (如 "level>=50", "class:mage", "hp_percent<30")
+//   source   - 来源标识
+//   item     - 物品 (可能为 null)
+
+function check(entity, text, source, item) {
+
+    // 等级条件: level>=N 或 等级>=N
+    if (text.startsWith("level>=") || text.startsWith("等级>=")) {
+        var parts = text.split(">=")
+        var required = toNumber(parts.get(1).trim())
+        if (isPlayer(entity)) {
+            var level = placeholderDouble(entity, "%player_level%", 0)
+            return level >= required
+        }
+        return false
+    }
+
+    // 职业条件: class:xxx 或 职业:xxx
+    if (text.startsWith("class:") || text.startsWith("职业:")) {
+        var clazz = text.split(":").get(1).trim()
+        if (isPlayer(entity)) {
+            return entity.hasPermission("nova.class." + clazz)
+        }
+        return false
+    }
+
+    // 血量百分比条件: hp<N% 或 血量<N%
+    if (text.contains("hp<") || text.contains("血量<")) {
+        var numStr = text.replaceAll("[^0-9.]", "")
+        var threshold = toNumber(numStr) / 100.0
+        return entity.getHealth() / entity.getMaxHealth() < threshold
+    }
+
+    // 未识别的条件默认通过
+    return true
+}

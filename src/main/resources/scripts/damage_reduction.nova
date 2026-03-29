@@ -1,0 +1,10 @@
+// 伤害减免属性脚本
+// 触发类型: DEFENSE
+// 参数: attacker, victim, ctx, attrValue (减免比例)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (attrValue > 0 && ctx.getDamage() > 0) {
+        var reduced = ctx.getDamage() * clamp(attrValue, 0.0, 0.9)
+        ctx.setDamage(max(ctx.getDamage() - reduced, 1.0))
+    }
+}

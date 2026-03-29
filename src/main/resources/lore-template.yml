@@ -1,0 +1,51 @@
+# Lore 自动生成模板
+# 从 NBT 属性数据自动生成展示 Lore
+
+# 标记字符串（不可见，用于定位自动生成区段）
+marker:
+  start: "§k§r§n§o§v§a§s"
+  end: "§k§r§n§o§v§a§e"
+
+# 属性区段前后的装饰行
+header:
+  - "§6§m━━━━━━━━━━━━━━━━"
+  - "§e✦ 属性"
+
+footer:
+  - "§6§m━━━━━━━━━━━━━━━━"
+
+# 不同值类型的显示格式
+# 占位符: {name}=属性显示名, {value}=值, {min}=最小值, {max}=最大值,
+#          {base}=基础值, {percent}=百分比加成
+format:
+  # 单值: 物理攻击: 100
+  default: "§7{name}: §f{value}"
+  # 范围值: 物理攻击: 100~200
+  range: "§7{name}: §f{min}~{max}"
+  # 百分比属性: 暴击率: 25%
+  percent: "§7{name}: §f{value}%"
+  # 纯百分比加成: 攻击力: +10%
+  percent-bonus: "§7{name}: §a+{percent}%"
+  # 基础值 + 百分比: 攻击力: 100(+10%)
+  two-part: "§7{name}: §f{base}§7(§a+{percent}%§7)"
+
+# 属性显示排序（未列出的属性按注册顺序排在后面）
+sort-order:
+  - physical_damage
+  - magic_damage
+  - true_damage
+  - defense
+  - magic_defense
+  - health
+  - critical_chance
+  - critical_damage
+  - dodge
+  - lifesteal
+  - health_regen
+  - attack_speed
+
+# 值为 0 的属性是否显示
+show-zero: false
+
+# 小数位数
+decimal-places: 1

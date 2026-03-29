@@ -1,0 +1,10 @@
+// 反伤属性脚本
+// 触发类型: DEFENSE
+// 参数: attacker, victim, ctx, attrValue (反伤比例)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (attrValue > 0 && ctx.getDamage() > 0) {
+        var reflectDmg = ctx.getDamage() * attrValue
+        attackTo(victim, attacker, reflectDmg)
+    }
+}

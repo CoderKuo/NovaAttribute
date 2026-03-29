@@ -1,0 +1,58 @@
+// 掉落增强脚本示例（MythicMobs NovaDropBonus 的 script 模式）
+//
+// 函数签名: onDrop(killer, mobId, level, drops, attrValue)
+//   killer    — 击杀者（LivingEntity）
+//   mobId     — MythicMobs 怪物 ID（字符串）
+//   level     — 怪物等级（数字）
+//   drops     — 掉落物列表（MutableList<ItemStack>，可增删改）
+//   attrValue — 击杀者的属性值（如 luck）
+//
+// 可用函数:
+//   buildItem(material, amount)    — 构建物品（material 为大写材质名，如 "DIAMOND"）
+//   setItemName(item, name)        — 设置物品显示名
+//   setItemLore(item, loreList)    — 设置物品 Lore
+//   chance(probability)            — 概率判定（0.0~1.0）
+//   random(min, max)               — 随机浮点数
+//   randomInt(min, max)            — 随机整数
+//
+// 掉落物操作（Java List 方法）:
+//   drops.size()                   — 掉落物数量
+//   drops.get(index)               — 获取第 i 个物品
+//   drops.add(item)                — 添加掉落物
+//   drops.remove(index)            — 移除第 i 个物品
+//   item.getAmount()               — 获取物品数量
+//   item.setAmount(n)              — 设置物品数量
+
+fun onDrop(killer, mobId, level, drops, attrValue) {
+    // === 数量增强 ===
+    // 每点幸运 +1% 掉落数量
+    var quantityBonus = attrValue * 0.01
+    if (quantityBonus > 0) {
+        var i = 0
+        while (i < drops.size()) {
+            var item = drops.get(i)
+            var extra = item.getAmount() * quantityBonus
+            if (extra >= 1) {
+                item.setAmount(item.getAmount() + extra)
+            }
+            i = i + 1
+        }
+    }
+
+    // === 特殊掉落 ===
+    // 幸运 >= 30 时，5% 概率额外掉落钻石
+    if (attrValue >= 30 && chance(0.05)) {
+        var diamond = buildItem("DIAMOND", randomInt(1, 3))
+        drops.add(diamond)
+    }
+
+    // === 根据等级额外掉落 ===
+    // Boss 等级 >= 5 时，幸运每 10 点额外掉 1 个金锭
+    if (level >= 5) {
+        var extraGold = attrValue / 10
+        if (extraGold >= 1) {
+            var gold = buildItem("GOLD_INGOT", extraGold)
+            drops.add(gold)
+        }
+    }
+}

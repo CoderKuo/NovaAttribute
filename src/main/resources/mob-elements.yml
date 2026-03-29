@@ -1,0 +1,37 @@
+# 怪物元素弱点配置
+#
+# 配置了弱点的怪物只受指定元素类型的伤害，其他伤害类型无效
+#
+# 可用伤害类型:
+#   physical  - 物理伤害
+#   magic     - 魔法伤害
+#   true      - 真实伤害
+#   fire      - 火焰伤害
+#   ice       - 冰霜伤害
+#   lightning  - 雷电伤害
+#   poison    - 毒素伤害
+#
+# 未配置的怪物受所有伤害（默认行为）
+# 可以配置多个弱点元素，怪物会受到所有列出类型的伤害
+
+# 按实体类型匹配 (Bukkit EntityType 名称，大写)
+# 示例:
+# types:
+#   BLAZE:
+#     - ice
+#     - lightning
+#   STRAY:
+#     - fire
+#   MAGMA_CUBE:
+#     - ice
+types: {}
+
+# 按怪物自定义名称匹配 (去色后精确匹配，支持 MythicMobs 等)
+# 示例:
+# names:
+#   "火焰领主":
+#     - ice
+#   "冰霜巨人":
+#     - fire
+#     - lightning
+names: {}

@@ -1,0 +1,31 @@
+// NovaAttribute 默认属性汇总脚本
+// 参数: attrId (属性ID), allValues (所有来源的数值列表), defaultValue (默认值)
+// 返回: 汇总后的最终值
+
+fun combine(attrId, allValues, defaultValue) {
+    if (allValues.size() == 0) {
+        return defaultValue
+    }
+
+    // 加算（第一段数值之和）
+    var additive = 0.0
+    // 乘算百分比（第二段数值之和）
+    var multiplicative = 0.0
+
+    for (values in allValues) {
+        if (values.size() >= 1) {
+            additive = additive + values.get(0)
+        }
+        if (values.size() >= 2) {
+            multiplicative = multiplicative + values.get(1)
+        }
+    }
+
+    var base = defaultValue + additive
+
+    if (multiplicative != 0.0) {
+        base = base * (1.0 + multiplicative)
+    }
+
+    return base
+}

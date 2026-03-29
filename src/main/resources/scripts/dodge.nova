@@ -1,0 +1,13 @@
+// 闪避属性脚本
+// 触发类型: DEFENSE
+// 参数: attacker, victim, ctx, attrValue (闪避几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    // 攻击者的"无视闪避"降低有效闪避率
+    var ignoreDodge = clamp(getAttr(attacker, "ignore_dodge"), 0.0, 1.0)
+    var effectiveDodge = attrValue * (1.0 - ignoreDodge)
+    if (effectiveDodge > 0 && chance(effectiveDodge)) {
+        ctx.setDamage(0.0)
+        ctx.setProperty("damageType", "miss")
+    }
+}

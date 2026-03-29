@@ -1,0 +1,15 @@
+// 格挡属性脚本
+// 触发类型: DEFENSE
+// 参数: attacker, victim, ctx, attrValue (格挡几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (ctx.getDamage() > 0 && chance(attrValue)) {
+        var blockRate = getAttr(victim, "block_rate")
+        if (blockRate <= 0) {
+            blockRate = 0.5
+        }
+        var reduced = ctx.getDamage() * blockRate
+        ctx.setDamage(max(ctx.getDamage() - reduced, 1.0))
+        ctx.setProperty("isBlocked", true)
+    }
+}

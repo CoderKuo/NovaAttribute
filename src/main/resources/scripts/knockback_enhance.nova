@@ -1,0 +1,14 @@
+// 击退强度属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (击退强度)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (attrValue > 0) {
+        // 被攻击者的击退抗性降低击退效果
+        var resistance = clamp(getAttr(victim, "knockback_resistance"), 0.0, 1.0)
+        var effective = attrValue * (1.0 - resistance)
+        if (effective > 0) {
+            knockback(victim, attacker, effective)
+        }
+    }
+}

@@ -1,0 +1,9 @@
+// 生命恢复属性脚本
+// 触发类型: PERIODIC (每 interval tick 执行一次)
+// 参数: entity, attrValue (恢复量)
+
+fun execute(entity, attrValue) {
+    if (attrValue > 0 && isAlive(entity)) {
+        safeHeal(entity, attrValue)
+    }
+}

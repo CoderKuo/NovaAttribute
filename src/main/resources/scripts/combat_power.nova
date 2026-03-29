@@ -1,0 +1,79 @@
+// NovaAttribute 战斗力计算脚本
+// 参数: entity (实体)
+// 返回: 战斗力数值（返回负数则使用系数回退计算）
+
+fun calculate(entity) {
+    var power = 0.0
+
+    // 基础攻击属性
+    power = power + getAttr(entity, "physical_damage") * 1.0
+    power = power + getAttr(entity, "magic_damage") * 1.2
+    power = power + getAttr(entity, "true_damage") * 1.5
+
+    // 穿透属性
+    power = power + getAttr(entity, "armor_penetration") * 150
+    power = power + getAttr(entity, "magic_penetration") * 150
+    power = power + getAttr(entity, "ignore_dodge") * 100
+
+    // 防御属性
+    power = power + getAttr(entity, "physical_defense") * 0.8
+    power = power + getAttr(entity, "magic_defense") * 0.8
+    power = power + getAttr(entity, "damage_reduction") * 250
+    power = power + getAttr(entity, "block_chance") * 200
+    power = power + getAttr(entity, "block_rate") * 100
+    power = power + getAttr(entity, "toughness") * 150
+    power = power + getAttr(entity, "knockback_resistance") * 30
+
+    // 生命属性
+    power = power + getAttr(entity, "max_health") * 0.3
+    power = power + getAttr(entity, "health_regen") * 10
+
+    // 暴击评分（非线性）
+    var crit = getAttr(entity, "critical_chance")
+    var critDmg = getAttr(entity, "critical_damage")
+    power = power + (crit * critDmg * 500)
+
+    // 生存属性
+    power = power + getAttr(entity, "dodge") * 300
+    power = power + getAttr(entity, "lifesteal") * 300
+    power = power + getAttr(entity, "thorns") * 250
+
+    // 状态触发
+    power = power + getAttr(entity, "ignite_chance") * 100
+    power = power + getAttr(entity, "poison_chance") * 100
+    power = power + getAttr(entity, "wither_chance") * 120
+    power = power + getAttr(entity, "slow_chance") * 80
+    power = power + getAttr(entity, "blind_chance") * 100
+    power = power + getAttr(entity, "lightning_chance") * 150
+
+    // 击退
+    power = power + getAttr(entity, "knockback") * 50
+
+    // PVP/PVE 加成
+    power = power + getAttr(entity, "pvp_damage_bonus") * 200
+    power = power + getAttr(entity, "pve_damage_bonus") * 100
+
+    // 击杀属性
+    power = power + getAttr(entity, "kill_heal") * 5
+    power = power + getAttr(entity, "exp_bonus") * 3
+
+    // 元素伤害
+    power = power + getAttr(entity, "fire_damage") * 1.0
+    power = power + getAttr(entity, "ice_damage") * 1.0
+    power = power + getAttr(entity, "lightning_damage") * 1.0
+    power = power + getAttr(entity, "poison_damage") * 1.0
+
+    // 元素抗性
+    power = power + getAttr(entity, "fire_resistance") * 0.8
+    power = power + getAttr(entity, "ice_resistance") * 0.8
+    power = power + getAttr(entity, "lightning_resistance") * 0.8
+    power = power + getAttr(entity, "poison_resistance") * 0.8
+
+    // 攻速
+    power = power + getAttr(entity, "attack_speed") * 50
+
+    // 移动速度
+    power = power + getAttr(entity, "movement_speed") * 100
+
+    return power
+}

@@ -1,0 +1,48 @@
+# NovaAttribute 战斗机制属性定义
+#
+# 蓄力/弓箭/召唤机制的属性
+# 蓄力和弓箭计算集成在 damage.nova 中
+# 弓箭发射由 MechanicsListener 处理
+
+attributes:
+
+  # ====== 蓄力机制 ======
+
+  charge_bonus:
+    name: "§f蓄力加成"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  charge_disrupt:
+    name: "§7蓄力干扰"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  # ====== 弓箭机制 ======
+
+  arrow_damage:
+    name: "§6弓箭伤害"
+    default: 0.0
+    range: true
+    trigger: PASSIVE
+    combat-power: 1.0
+
+  arrow_speed:
+    name: "§f箭矢速度"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 0.5
+
+  # ====== 召唤机制 ======
+
+  summon_power:
+    name: "§d召唤强度"
+    default: 0.0
+    lore-divisor: 100.0
+    trigger: PASSIVE
+    combat-power: 1.0

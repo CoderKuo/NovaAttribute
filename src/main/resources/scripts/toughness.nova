@@ -1,0 +1,13 @@
+// 韧性属性脚本
+// 触发类型: DEFENSE
+// 参数: attacker, victim, ctx, attrValue (韧性比例，减少暴击额外伤害)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (attrValue > 0 && ctx.getProperty("isCritical") == true) {
+        var critBonus = ctx.getProperty("critBonusDamage")
+        if (critBonus != null) {
+            var reduction = toNumber(critBonus) * clamp(attrValue, 0.0, 1.0)
+            ctx.setDamage(max(ctx.getDamage() - reduction, 1.0))
+        }
+    }
+}

@@ -1,0 +1,9 @@
+// 失明属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (失明几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (chance(attrValue)) {
+        applyEffect(victim, "BLINDNESS", 30, 0)
+    }
+}

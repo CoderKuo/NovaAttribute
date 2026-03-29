@@ -1,0 +1,125 @@
+# NovaAttribute 主配置文件
+
+# 调试模式
+debug: false
+
+# 属性刷新间隔（tick），防止高频刷新
+refresh-cooldown: 2
+
+# 战斗系统
+combat:
+  # 是否启用自定义伤害计算
+  enabled: true
+  # 是否取消原版攻击冷却
+  cancel-vanilla-cooldown: false
+  # 战斗消息提醒
+  message:
+    enabled: true
+    attacker: "§7你对 §f{victim} §7造成了 §c{damage} §7点伤害"
+    victim: "§7你受到了 §f{attacker} §7的 §c{damage} §7点伤害"
+    critical: "§6✦暴击！§7你对 §f{victim} §7造成了 §c{damage} §7点伤害"
+    miss-attacker: "§7{victim} §a闪避了§7你的攻击"
+    miss-victim: "§a你闪避了 §f{attacker} §a的攻击"
+
+# Buff 系统
+buff:
+  # 过期检查间隔（tick）
+  check-interval: 20
+
+# 大数值格式化与解析
+# 配置的 units 同时用于：
+#   1. Lore 解析：识别 "100亿" "1.5万" 等带后缀的数字
+#   2. 数值显示：将大数字缩写为 "100亿" 等格式
+number-format:
+  # 是否启用大数值缩写显示（关闭后仍可解析带单位后缀的数字）
+  enabled: false
+  # 小数位数
+  decimal-places: 1
+  # 数字单位定义（后缀 -> 倍数）
+  # 显示时按倍数从大到小匹配，解析时识别所有已配置的后缀
+  units:
+    万: 10000
+    亿: 100000000
+    万亿: 1000000000000
+    # --- 扩展单位（取消注释即可启用）---
+    # 兆: 1000000000000
+    # 京: 10000000000000000
+    # 垓: 1.0e20
+    # 秭: 1.0e24
+    # 穰: 1.0e28
+    # --- 英文单位 ---
+    # K: 1000
+    # M: 1000000
+    # B: 1000000000
+    # T: 1000000000000
+
+# 全局Lore解析
+# 属性未定义 lore-pattern 时，自动根据属性显示名匹配Lore行
+# 支持的值格式:
+#   100, +100, (+100)         固定值
+#   10%, +10%                 百分比
+#   100~200, 100-200          范围值（~ 和 - 均可作为分隔符）
+#   +100(+10%)                基础值 + 百分比加成
+#   100万, 100亿              带单位后缀
+lore-format:
+  enabled: true
+  # 属性名与数值的分隔符（正则）
+  separator: "[：:] ?"
+
+# 装备条件（NBT NovaCondition 键，脚本判定）
+condition:
+  enabled: true
+
+# 内嵌条件（单属性行级条件，如 "暴击率: +25% / 等级>=50"）
+inline-condition:
+  enabled: true
+  # Lore 中属性值与条件的分隔符
+  lore-separator: " / "
+
+# 伤害漂浮文字
+damage-indicator:
+  enabled: true
+  # 文字生成高度偏移（方块）
+  offset-y: 1.5
+  # 显示持续时间（tick）
+  duration: 30
+  # 可见范围（方块）
+  view-range: 64
+  # 不同伤害类型的显示格式
+  format:
+    physical: "§c-{damage}"
+    magic: "§b✦ -{damage}"
+    true: "§4♦ -{damage}"
+    critical: "§6§l★ -{damage}"
+    heal: "§a+{damage}"
+    miss: "§7Miss"
+
+# 原版属性同步
+# 将 NovaAttribute 计算的 max_health/movement_speed/attack_speed/knockback_resistance
+# 同步到 Bukkit 原版属性系统，使实际游戏效果与属性值一致
+vanilla-sync:
+  enabled: true
+
+# 血量条缩放
+# RPG 服务器中玩家血量可能上千甚至上万，原版血条会显示异常
+# 启用后固定显示为指定刻度（20.0 = 10颗心），血条按百分比显示
+health-scale:
+  enabled: false
+  value: 20.0
+
+# 数据持久化（使用 Rulib 数据库模块）
+# 持久化标记为 persistent 的 Buff、冷却和计数器
+database:
+  type: sqlite  # sqlite / mysql / postgresql
+  # mysql:
+  #   host: localhost
+  #   port: 3306
+  #   database: nova_attribute
+  #   user: root
+  #   password: ''
+  # postgresql:
+  #   host: localhost
+  #   port: 5432
+  #   database: nova_attribute
+  #   user: postgres
+  #   password: ''

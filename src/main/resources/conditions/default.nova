@@ -1,0 +1,57 @@
+// NovaAttribute 装备条件脚本
+// 检查玩家是否满足物品的装备条件
+//
+// 参数:
+//   player     - 玩家
+//   conditions - 条件 Map (从 NBT NovaCondition 读取)
+//   item       - 物品
+//   source     - 当前 source 标识 (如 "equipment:mainhand")
+
+function check(player, conditions, item, source) {
+
+    // 等级检查
+    if (conditions.containsKey("level")) {
+        var required = conditions.get("level")
+        var playerLevel = placeholderDouble(player, "%player_level%", 0)
+        if (playerLevel < required) {
+            sendMessage(player, "§c需要等级 " + required + " 才能装备此物品")
+            return false
+        }
+    }
+
+    // 职业检查: "warrior/mage" 表示战士或法师
+    if (conditions.containsKey("class")) {
+        var classStr = conditions.get("class") + ""
+        var classes = classStr.split("/")
+        var hasClass = false
+        for (var i = 0; i < classes.size(); i++) {
+            if (player.hasPermission("nova.class." + classes.get(i).trim())) {
+                hasClass = true
+                break
+            }
+        }
+        if (!hasClass) {
+            sendMessage(player, "§c需要职业: " + classStr)
+            return false
+        }
+    }
+
+    // 权限检查
+    if (conditions.containsKey("permission")) {
+        var perm = conditions.get("permission") + ""
+        if (!player.hasPermission(perm)) {
+            sendMessage(player, "§c缺少权限: " + perm)
+            return false
+        }
+    }
+
+    // 来源匹配检查 (替代传统的"装备位置")
+    if (conditions.containsKey("source")) {
+        var required = conditions.get("source") + ""
+        if (!source.contains(required)) {
+            return false
+        }
+    }
+
+    return true
+}

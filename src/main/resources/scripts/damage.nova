@@ -1,0 +1,104 @@
+// NovaAttribute 默认伤害计算脚本
+// 参数: attacker (攻击者), victim (被攻击者), originalDamage (原始伤害), ctx (伤害上下文)
+// 返回: 计算后的伤害值
+
+fun calculate(attacker, victim, originalDamage, ctx) {
+    // ====== 基础攻击 ======
+    var physDmg = getAttrRandom(attacker, "physical_damage")
+    var magicDmg = getAttrRandom(attacker, "magic_damage")
+    var trueDmg = getAttrRandom(attacker, "true_damage")
+
+    // ====== 穿透计算 ======
+    var armorPen = clamp(getAttr(attacker, "armor_penetration"), 0.0, 1.0)
+    var magicPen = clamp(getAttr(attacker, "magic_penetration"), 0.0, 1.0)
+
+    // ====== 防御 ======
+    var physDef = getAttr(victim, "physical_defense")
+    var magicDef = getAttr(victim, "magic_defense")
+
+    // 穿透降低有效防御
+    var effectivePhysDef = physDef * (1.0 - armorPen)
+    var effectiveMagicDef = magicDef * (1.0 - magicPen)
+
+    // 物理伤害 = 物理攻击 - 有效防御（最低 1）
+    var physResult = max(physDmg - effectivePhysDef, 1.0)
+    // 魔法伤害 = 魔法攻击 - 有效抗性（最低 0）
+    var magicResult = max(magicDmg - effectiveMagicDef, 0.0)
+
+    // ====== 元素伤害 ======
+    var fireDmg = max(getAttrRandom(attacker, "fire_damage") - getAttr(victim, "fire_resistance"), 0.0)
+    var iceDmg = max(getAttrRandom(attacker, "ice_damage") - getAttr(victim, "ice_resistance"), 0.0)
+    var lightningDmg = max(getAttrRandom(attacker, "lightning_damage") - getAttr(victim, "lightning_resistance"), 0.0)
+    var poisonDmg = max(getAttrRandom(attacker, "poison_damage") - getAttr(victim, "poison_resistance"), 0.0)
+
+    // ====== 怪物元素弱点过滤 ======
+    var weakness = getMobWeakness(victim)
+    if (weakness != null) {
+        if (weakness.contains("physical") == false) { physResult = 0.0 }
+        if (weakness.contains("magic") == false) { magicResult = 0.0 }
+        if (weakness.contains("true") == false) { trueDmg = 0.0 }
+        if (weakness.contains("fire") == false) { fireDmg = 0.0 }
+        if (weakness.contains("ice") == false) { iceDmg = 0.0 }
+        if (weakness.contains("lightning") == false) { lightningDmg = 0.0 }
+        if (weakness.contains("poison") == false) { poisonDmg = 0.0 }
+    }
+
+    // ====== 总伤害 ======
+    var totalDamage = physResult + magicResult + trueDmg + fireDmg + iceDmg + lightningDmg + poisonDmg
+
+    // ====== 蓄力机制 ======
+    if (isPlayer(attacker)) {
+        var chargeLevel = getAttackCooldown(attacker)
+        var chargeBonus = getAttr(attacker, "charge_bonus")
+        var chargeDisrupt = getAttr(victim, "charge_disrupt")
+        if (chargeBonus != 0.0 || chargeDisrupt != 0.0) {
+            var effectiveCharge = min(1.0, chargeLevel + chargeBonus)
+            effectiveCharge = max(0.2, effectiveCharge - chargeDisrupt)
+            var chargeMultiplier = 0.2 + effectiveCharge * effectiveCharge * 0.8
+            totalDamage = totalDamage * chargeMultiplier
+        }
+    }
+
+    // ====== 弓箭机制 ======
+    if (ctx.isProjectileHit()) {
+        var arrowDmg = getAttrRandom(attacker, "arrow_damage")
+        if (arrowDmg > 0.0) {
+            totalDamage = totalDamage + arrowDmg
+        }
+    }
+
+    // ====== PVP/PVE 伤害加成 ======
+    if (isPlayer(attacker) && isPlayer(victim)) {
+        var pvpBonus = getAttr(attacker, "pvp_damage_bonus")
+        if (pvpBonus != 0.0) {
+            totalDamage = totalDamage * (1.0 + pvpBonus)
+        }
+    } else if (isPlayer(attacker)) {
+        var pveBonus = getAttr(attacker, "pve_damage_bonus")
+        if (pveBonus != 0.0) {
+            totalDamage = totalDamage * (1.0 + pveBonus)
+        }
+    }
+
+    // ====== 设置伤害类型标记（用于指示器显示） ======
+    var elementTotal = fireDmg + iceDmg + lightningDmg + poisonDmg
+    if (trueDmg > physResult && trueDmg > magicResult && trueDmg > elementTotal) {
+        ctx.setProperty("damageType", "true")
+    } else if (elementTotal > physResult && elementTotal > magicResult) {
+        if (fireDmg >= iceDmg && fireDmg >= lightningDmg && fireDmg >= poisonDmg) {
+            ctx.setProperty("damageType", "fire")
+        } else if (iceDmg >= lightningDmg && iceDmg >= poisonDmg) {
+            ctx.setProperty("damageType", "ice")
+        } else if (lightningDmg >= poisonDmg) {
+            ctx.setProperty("damageType", "lightning")
+        } else {
+            ctx.setProperty("damageType", "poison")
+        }
+    } else if (magicResult > physResult) {
+        ctx.setProperty("damageType", "magic")
+    } else {
+        ctx.setProperty("damageType", "physical")
+    }
+
+    return totalDamage
+}

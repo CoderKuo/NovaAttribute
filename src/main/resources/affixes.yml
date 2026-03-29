@@ -1,0 +1,87 @@
+# 属性词条配置
+#
+# 当物品 Lore 中存在特定文本时，自动附加一整套属性
+# 匹配基于去色后的纯文本
+#
+# ====== 通用配置项 ======
+#   type: contains  — 包含匹配（Lore 中任意行包含指定文本即触发）
+#   type: regex     — 正则匹配（支持捕获组，用 {1} {2} 引用）
+#   match:          — 匹配文本或正则表达式
+#   lore-values:    — 默认 true，属性值按 Lore 显示值填写（自动除以 lore-divisor）
+#                     设为 false 则按内部原始值填写
+#
+# ====== 两种模式 ======
+#
+# 【attributes 模式】直接在配置中写死属性
+#   attributes:     — 匹配成功时附加的属性及数值
+#   属性值格式:
+#     固定数值:    50              → 直接使用
+#     捕获组引用:  "{1}"           → 使用正则第1个捕获组的值
+#     表达式:      "{1} * 10 + 5"  → 任意 NovaScript 表达式（编译后缓存）
+#
+# 【script 模式】用脚本动态决定属性
+#   script:         — 脚本文件名（不含 .nova），脚本需提供 resolve(result, groups) 函数
+#                     result.set("属性ID", 数值) 写入属性（自动处理 lore-values 换算）
+#                     groups 为捕获组列表，groups.get(0) 取第一个捕获组
+#
+# ====== 示例 ======
+#
+# affixes:
+#
+#   # 包含匹配 + attributes 模式
+#   divine_sword:
+#     type: contains
+#     match: "蕴含着高额的暴击伤害和吸血能力"
+#     attributes:
+#       critical_damage: 50
+#       lifesteal: 10
+#
+#   # 正则匹配 + attributes 模式（提取等级）
+#   super_attack:
+#     type: regex
+#     match: "拥有(\\d+)级的超强攻击"
+#     attributes:
+#       physical_damage: "{1} * 10"
+#       critical_chance: "{1} * 5"
+#
+#   # 正则匹配 + script 模式（根据捕获文本动态决定属性）
+#   elemental_power:
+#     type: regex
+#     match: "(火焰|冰霜|雷电|毒素)之力 (\\d+)级"
+#     script: affix_elemental
+#
+#   对应脚本 scripts/affix_elemental.nova:
+#
+#   fun resolve(result, groups) {
+#       var element = groups.get(0)
+#       var level = toNumber(groups.get(1))
+#       var attrId = if (element == "火焰") { "fire_damage" }
+#           else if (element == "冰霜") { "ice_damage" }
+#           else if (element == "雷电") { "lightning_damage" }
+#           else { "poison_damage" }
+#       result.set(attrId, level * 15)
+#   }
+
+affixes:
+
+  # 包含匹配示例: Lore 中出现该文本时附加暴击和吸血
+  divine_sword:
+    type: contains
+    match: "蕴含着高额的暴击伤害和吸血能力"
+    attributes:
+      critical_damage: 50
+      lifesteal: 10
+
+  # 正则匹配示例: 提取等级数值计算属性
+  super_attack:
+    type: regex
+    match: "拥有(\\d+)级的超强攻击"
+    attributes:
+      physical_damage: "{1} * 10"
+      critical_chance: "{1} * 5"
+
+  # 脚本模式示例: 根据捕获的元素名动态决定属性
+  elemental_power:
+    type: regex
+    match: "(火焰|冰霜|雷电|毒素)之力 (\\d+)级"
+    script: affix_elemental

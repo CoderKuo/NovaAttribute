@@ -1,0 +1,11 @@
+// 雷击属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (雷击几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (chance(attrValue)) {
+        strikeLightning(victim)
+        var bonusDmg = ctx.getDamage() * 0.3
+        ctx.setDamage(ctx.getDamage() + bonusDmg)
+    }
+}

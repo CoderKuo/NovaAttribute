@@ -1,0 +1,15 @@
+// 暴击属性脚本
+// 触发类型: ATTACK
+// 参数: attacker, victim, ctx, attrValue (暴击几率)
+
+fun execute(attacker, victim, ctx, attrValue) {
+    if (chance(attrValue)) {
+        var critDmg = getAttrRandom(attacker, "critical_damage")
+        var before = ctx.getDamage()
+        var bonusDmg = before * critDmg
+        var newDmg = before + bonusDmg
+        ctx.setDamage(newDmg)
+        ctx.setProperty("isCritical", true)
+        ctx.setProperty("critBonusDamage", bonusDmg)
+    }
+}
