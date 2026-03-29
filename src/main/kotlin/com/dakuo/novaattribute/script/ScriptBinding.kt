@@ -242,34 +242,11 @@ object ScriptBinding {
 
         // ====== 战斗机制 ======
 
-        // 缓存 NMS 方法引用，避免每次反射查找
-        var nmsAttackCooldownMethod: java.lang.reflect.Method? = null
-        var nmsResolved = false
-
         setup.defineFunction("getAttackCooldown") { entity ->
             val p = entity as? Player ?: return@defineFunction 1.0
-            try {
-                // 1.15+ Bukkit API
-                p.attackCooldown.toDouble()
-            } catch (_: NoSuchMethodError) {
-                // 1.9~1.14: 通过 NMS EntityHuman 获取
-                try {
-                    val handle = p.javaClass.getMethod("getHandle").invoke(p)
-                    if (!nmsResolved) {
-                        nmsResolved = true
-                        // 不同版本的方法名: s(1.12), dG(1.13), getAttackCooldown(1.14 mojang)
-                        for (name in arrayOf("s", "dG", "dH", "getAttackCooldown", "w")) {
-                            try {
-                                nmsAttackCooldownMethod = handle.javaClass.getMethod(name, Float::class.java)
-                                break
-                            } catch (_: NoSuchMethodException) {}
-                        }
-                    }
-                    (nmsAttackCooldownMethod?.invoke(handle, 0.5f) as? Float)?.toDouble() ?: 1.0
-                } catch (_: Exception) {
-                    1.0
-                }
-            }
+            // 优先读取挥手事件缓存（伤害事件触发时冷却已被 Minecraft 重置）
+            val cached = com.dakuo.novaattribute.listener.MechanicsListener.getCachedCharge(p.uniqueId)
+            cached?.toDouble() ?: 1.0
         }
 
         // ====== 效果链（属性脚本间通信） ======

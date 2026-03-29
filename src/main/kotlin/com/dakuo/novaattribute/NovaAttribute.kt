@@ -122,6 +122,8 @@ object NovaAttribute : Plugin() {
 
         // 10. 启动装备内容变更检测（每秒检查物品是否被外部修改）
         EquipmentListener.startContentCheck()
+        // 启动蓄力值追踪（每 tick 缓存，攻击事件读上一 tick 的值）
+        com.dakuo.novaattribute.listener.MechanicsListener.startChargeTracker()
 
         // 11. 启动 PERIODIC 属性调度器
         PeriodicScheduler.start()
@@ -184,6 +186,7 @@ object NovaAttribute : Plugin() {
         }
 
         // 停止调度器和触发器
+        com.dakuo.novaattribute.listener.MechanicsListener.stopChargeTracker()
         PeriodicScheduler.stop()
         TriggerManager.unregisterAll()
         try {
