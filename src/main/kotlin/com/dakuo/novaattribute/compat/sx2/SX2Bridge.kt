@@ -100,7 +100,7 @@ object SX2Bridge {
             try {
                 attr.eventMethod(values, damageData)
             } catch (e: Exception) {
-                System.err.println("[NovaAttribute-SX2] Error in ATTACK attribute '${attr.name}': ${e.message}")
+                taboolib.common.platform.function.warning("[NovaAttribute-SX2] Error in ATTACK attribute '${attr.name}': ${e.message}")
             }
         }
 
@@ -114,7 +114,7 @@ object SX2Bridge {
             try {
                 attr.eventMethod(values, damageData)
             } catch (e: Exception) {
-                System.err.println("[NovaAttribute-SX2] Error in DEFENCE attribute '${attr.name}': ${e.message}")
+                taboolib.common.platform.function.warning("[NovaAttribute-SX2] Error in DEFENCE attribute '${attr.name}': ${e.message}")
             }
         }
 

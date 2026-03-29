@@ -6,7 +6,6 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityShootBowEvent
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.submit
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
@@ -18,11 +17,10 @@ object MechanicsListener {
 
     /**
      * 蓄力值缓存
-     * Minecraft 在伤害事件之前就重置了攻击冷却，所以需要每 tick 记录，
-     * 攻击时读取的是上一 tick 的值（即攻击前的真实蓄力值）
+     * 通过 PacketReceiveEvent 监听客户端挥手数据包（PacketPlayInArmAnimation）
+     * 数据包在 Netty 线程到达时冷却还未被 Minecraft 主线程重置，此时获取的是真实蓄力值
      */
     private val chargeCache = ConcurrentHashMap<UUID, Float>()
-    private var chargeTask: taboolib.common.platform.service.PlatformExecutor.PlatformTask? = null
 
     /** NMS 方法缓存 */
     private var nmsMethod: java.lang.reflect.Method? = null
@@ -31,33 +29,28 @@ object MechanicsListener {
 
     fun getCachedCharge(uuid: UUID): Float? = chargeCache[uuid]
 
-    fun startChargeTracker() {
-        chargeTask?.cancel()
-        chargeTask = taboolib.common.platform.function.submit(period = 1L) {
-            for (player in org.bukkit.Bukkit.getOnlinePlayers()) {
-                val value = getPlayerCharge(player)
-                if (value != null) {
-                    chargeCache[player.uniqueId] = value
-                }
-            }
-        }
-    }
-
-    fun stopChargeTracker() {
-        chargeTask?.cancel()
-        chargeTask = null
-        chargeCache.clear()
-    }
-
     fun cleanupCharge(uuid: UUID) {
         chargeCache.remove(uuid)
+    }
+
+    /**
+     * 监听客户端挥手数据包，在冷却重置前缓存蓄力值
+     * PacketPlayInArmAnimation 在 Netty 线程触发，早于主线程处理
+     */
+    @SubscribeEvent
+    fun onPacketReceive(e: taboolib.module.nms.PacketReceiveEvent) {
+        if (e.packet.name != "PacketPlayInArmAnimation") return
+        val value = getPlayerCharge(e.player)
+        if (value != null) {
+            chargeCache[e.player.uniqueId] = value
+        }
     }
 
     private fun getPlayerCharge(player: Player): Float? {
         try {
             return player.attackCooldown
         } catch (_: NoSuchMethodError) {}
-        // NMS fallback
+        // NMS fallback for 1.9~1.14
         try {
             val handle = player.javaClass.getMethod("getHandle").invoke(player)
             if (!nmsResolved) {
