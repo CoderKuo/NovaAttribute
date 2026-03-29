@@ -76,7 +76,22 @@ object DamageListener {
         ctx.finalDamage = damageEvent.finalDamage
 
         // ⑤ 显示伤害指示器 + 发送战斗消息
-        DamageIndicator.display(ctx)
+        // 如果 damage.nova 定义了 onDisplay 函数则调用（可用于集成第三方伤害显示插件）
+        // 否则使用内置指示器
+        var customDisplay = false
+        if (com.dakuo.novaattribute.script.ScriptBridge.hasFunction("damage", "onDisplay")) {
+            try {
+                com.dakuo.novaattribute.script.ScriptBridge.callFunction(
+                    "damage", "onDisplay", ctx.attacker, ctx.victim, ctx
+                )
+                customDisplay = true
+            } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute] onDisplay script error: ${e.message}")
+            }
+        }
+        if (!customDisplay) {
+            DamageIndicator.display(ctx)
+        }
         CombatMessage.send(ctx)
 
         // ⑥ 应用最终伤害

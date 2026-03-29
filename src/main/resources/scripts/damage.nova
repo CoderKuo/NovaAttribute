@@ -102,3 +102,29 @@ fun calculate(attacker, victim, originalDamage, ctx) {
 
     return totalDamage
 }
+
+// ====== 自定义伤害显示（可选） ======
+// 取消下方注释即可替代内置伤害指示器
+// 需要安装 CombatSystem（伤显）+ DragonCore 插件
+//
+// var CombatSystemApi = Java.type("pers.floret.combatsystem.api.CombatSystemApi")
+//
+// fun onDisplay(attacker, victim, ctx) {
+//     if (!isPlayer(attacker)) { return null }
+//     var damage = ctx.getDamage()
+//     var loc = victim.getLocation().add(
+//         random(-1.0, 1.0),
+//         random(1.0, 2.0),
+//         random(-1.0, 1.0)
+//     )
+//
+//     // 前缀：DragonCore 自定义字体映射（根据伤害类型切换贴图）
+//     // 暴击用 "蕔絲"，普通用 "婺絲"，可根据实际配置修改
+//     var prefix = "婺絲"
+//     if (isTriggered(ctx, "critical")) {
+//         prefix = "蕔絲"
+//     }
+//
+//     var text = prefix + toInt(damage)
+//     CombatSystemApi.create(attacker, 25, loc, text, true, toFloat(0.4), toFloat(0.4))
+// }

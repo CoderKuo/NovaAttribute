@@ -80,6 +80,14 @@ object ScriptBinding {
 
         // ====== 类型转换 ======
 
+        setup.defineFunction("toFloat") { value ->
+            (value as? Number)?.toFloat() ?: 0.0f
+        }
+
+        setup.defineFunction("toInt") { value ->
+            (value as? Number)?.toInt() ?: 0
+        }
+
         setup.defineFunction("toNumber") { value ->
             when (value) {
                 is Number -> value.toDouble()
@@ -234,8 +242,34 @@ object ScriptBinding {
 
         // ====== 战斗机制 ======
 
+        // 缓存 NMS 方法引用，避免每次反射查找
+        var nmsAttackCooldownMethod: java.lang.reflect.Method? = null
+        var nmsResolved = false
+
         setup.defineFunction("getAttackCooldown") { entity ->
-            (entity as? Player)?.attackCooldown?.toDouble() ?: 1.0
+            val p = entity as? Player ?: return@defineFunction 1.0
+            try {
+                // 1.15+ Bukkit API
+                p.attackCooldown.toDouble()
+            } catch (_: NoSuchMethodError) {
+                // 1.9~1.14: 通过 NMS EntityHuman 获取
+                try {
+                    val handle = p.javaClass.getMethod("getHandle").invoke(p)
+                    if (!nmsResolved) {
+                        nmsResolved = true
+                        // 不同版本的方法名: s(1.12), dG(1.13), getAttackCooldown(1.14 mojang)
+                        for (name in arrayOf("s", "dG", "dH", "getAttackCooldown", "w")) {
+                            try {
+                                nmsAttackCooldownMethod = handle.javaClass.getMethod(name, Float::class.java)
+                                break
+                            } catch (_: NoSuchMethodException) {}
+                        }
+                    }
+                    (nmsAttackCooldownMethod?.invoke(handle, 0.5f) as? Float)?.toDouble() ?: 1.0
+                } catch (_: Exception) {
+                    1.0
+                }
+            }
         }
 
         // ====== 效果链（属性脚本间通信） ======

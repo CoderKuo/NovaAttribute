@@ -36,7 +36,14 @@ object NovaAttribute : Plugin() {
     override fun onLoad() {
         // 尽早注册 NovaScript 全局函数库（所有 onLoad 先于所有 onEnable）
         // 确保其他插件在 onEnable 加载脚本时能找到 novaattr 库
-        ScriptLibraryExport.register()
+        try {
+            ScriptLibraryExport.register()
+        } catch (_: UninitializedPropertyAccessException) {
+            // NovaScript delegate 尚未初始化（NovaScript 未安装或未加载），跳过库注册
+            // 会在 onEnable 中重试
+        } catch (e: Exception) {
+            warning("[NovaAttribute] Failed to register script library: ${e.message}")
+        }
 
         // 释放默认资源文件
         releaseResourceFile("config.yml", replace = false)
@@ -142,6 +149,13 @@ object NovaAttribute : Plugin() {
         } catch (_: NoClassDefFoundError) {
         }
 
+        // 16. 重试注册脚本库（onLoad 时 NovaScript 可能未就绪）
+        try {
+            ScriptLibraryExport.register()
+        } catch (_: Exception) {
+            warning("[NovaAttribute] NovaScript not available, script library not registered.")
+        }
+
         info("[NovaAttribute] Plugin enabled! Attributes: ${AttributeRegistry.size()}")
     }
 
@@ -172,7 +186,10 @@ object NovaAttribute : Plugin() {
         // 停止调度器和触发器
         PeriodicScheduler.stop()
         TriggerManager.unregisterAll()
-        ScriptLibraryExport.unregister()
+        try {
+            ScriptLibraryExport.unregister()
+        } catch (_: Exception) {
+        }
 
         // 清理所有数据
         AttributeManager.cleanup()
@@ -185,7 +202,6 @@ object NovaAttribute : Plugin() {
     }
 
     private fun getDataFolder(): File {
-        val plugin = org.bukkit.Bukkit.getPluginManager().getPlugin("NovaAttribute")
-        return plugin?.dataFolder ?: File("plugins/NovaAttribute")
+        return taboolib.platform.BukkitPlugin.getInstance().dataFolder
     }
 }

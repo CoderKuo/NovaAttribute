@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack
 object ItemAttributeReader {
 
     fun read(item: ItemStack?): AttributeData {
-        if (item == null || item.type.isAir) return AttributeData()
+        if (item == null || item.type == org.bukkit.Material.AIR) return AttributeData()
         // NBT 优先，Lore 兜底
         val nbtData = NbtReader.read(item)
         val baseData = if (!nbtData.isEmpty()) nbtData else LoreReader.read(item)

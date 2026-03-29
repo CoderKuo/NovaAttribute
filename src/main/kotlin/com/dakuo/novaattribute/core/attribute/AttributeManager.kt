@@ -158,7 +158,7 @@ object AttributeManager {
     }
 
     private fun readEquipmentSlot(player: Player, map: AttributeMap, item: org.bukkit.inventory.ItemStack?, source: String) {
-        if (item == null || item.type.isAir) {
+        if (item == null || item.type == org.bukkit.Material.AIR) {
             map.remove(source)
             return
         }
