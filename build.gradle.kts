@@ -52,7 +52,7 @@ taboolib {
             name("dakuo")
         }
         dependencies {
-            name("NovaScript").optional(true)
+            name("NovaScript")
         }
     }
     version { taboolib = "6.2.4-99fb800" }
@@ -75,7 +75,7 @@ dependencies {
     compileOnly(kotlin("stdlib"))
 
     taboo("com.github.CoderKuo:Rulib:v1.0.0")
-    taboo("com.github.CoderKuo:NovaScript:v1.0.2")
+    compileOnly("com.github.CoderKuo:NovaScript:v1.0.2")
     taboo("ink.ptms:um:1.2.1")
 }
 
