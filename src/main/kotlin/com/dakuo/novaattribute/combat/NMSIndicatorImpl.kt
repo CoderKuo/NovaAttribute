@@ -2,7 +2,6 @@ package com.dakuo.novaattribute.combat
 
 import org.bukkit.Location
 import org.bukkit.entity.Player
-import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.sendPacket
 
 /**
@@ -22,8 +21,25 @@ class NMSIndicatorImpl : NMSIndicator() {
         armorStand.setCustomName(org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage.fromStringOrNull(text))
         armorStand.setId(entityId)
 
-        // 生成数据包
-        player.sendPacket(net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity(armorStand))
+        // 生成数据包：尝试单参数构造（1.17~1.20），失败则用全参数构造（1.21+）
+        val spawnPacket = try {
+            net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity(armorStand)
+        } catch (_: NoSuchMethodError) {
+            net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity(
+                entityId,
+                armorStand.getUUID(),
+                loc.x,
+                loc.y,
+                loc.z,
+                0f,
+                0f,
+                armorStand.getType(),
+                0,
+                net.minecraft.world.phys.Vec3D(0.0, 0.0, 0.0),
+                0.0
+            )
+        }
+        player.sendPacket(spawnPacket)
 
         // 元数据包
         try {
@@ -32,7 +48,7 @@ class NMSIndicatorImpl : NMSIndicator() {
             if (packedItems != null) {
                 player.sendPacket(net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata(entityId, packedItems))
             }
-        } catch (e: NoSuchMethodError) {
+        } catch (_: NoSuchMethodError) {
             // 1.17 ~ 1.19.2 使用 packDirty
             try {
                 val dirty = armorStand.entityData.packDirty()
