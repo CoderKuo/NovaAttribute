@@ -327,6 +327,35 @@ object ScriptBinding {
             null
         }
 
+        // ====== MythicMobs ======
+
+        setup.defineFunction("getMobLevel") { entity ->
+            val e = entity as? org.bukkit.entity.Entity ?: return@defineFunction 0.0
+            try {
+                ink.ptms.um.Mythic.API.getMob(e)?.level ?: 0.0
+            } catch (_: Exception) {
+                0.0
+            }
+        }
+
+        setup.defineFunction("getMobId") { entity ->
+            val e = entity as? org.bukkit.entity.Entity ?: return@defineFunction null
+            try {
+                ink.ptms.um.Mythic.API.getMob(e)?.id
+            } catch (_: Exception) {
+                null
+            }
+        }
+
+        setup.defineFunction("isMythicMob") { entity ->
+            val e = entity as? org.bukkit.entity.Entity ?: return@defineFunction false
+            try {
+                ink.ptms.um.Mythic.API.getMob(e) != null
+            } catch (_: Exception) {
+                false
+            }
+        }
+
         // ====== 怪物元素 ======
 
         setup.defineFunction("getMobWeakness") { entity ->

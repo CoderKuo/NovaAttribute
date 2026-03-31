@@ -105,6 +105,15 @@ object AttributeManager {
             }
         }
 
+        // ③.5 计算公式属性
+        if (entity is Player) {
+            try {
+                com.dakuo.novaattribute.feature.formula.FormulaManager.apply(entity)
+            } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute] Formula apply error: ${e.message}")
+            }
+        }
+
         // ④ 合并 Buff 属性
         val buffData = BuffManager.getCombinedData(entity)
         if (!buffData.isEmpty()) {
@@ -158,7 +167,7 @@ object AttributeManager {
     }
 
     private fun readEquipmentSlot(player: Player, map: AttributeMap, item: org.bukkit.inventory.ItemStack?, source: String) {
-        if (item == null || item.type == org.bukkit.Material.AIR) {
+        if (item == null || item.amount == 0 || item.type.name.endsWith("AIR")) {
             map.remove(source)
             return
         }

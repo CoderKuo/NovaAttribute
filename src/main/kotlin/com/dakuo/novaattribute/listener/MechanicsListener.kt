@@ -79,10 +79,26 @@ object MechanicsListener {
         }
     }
 
+    private const val SNAPSHOT_KEY = "nova:attr_snapshot"
+
+    /**
+     * 获取弹射物上快照的属性值（如果有）
+     */
+    fun getProjectileSnapshot(projectile: org.bukkit.entity.Entity): Map<String, Double>? {
+        val meta = projectile.getMetadata(SNAPSHOT_KEY)
+        @Suppress("UNCHECKED_CAST")
+        return meta.firstOrNull()?.value() as? Map<String, Double>
+    }
+
     @SubscribeEvent
     fun onShootBow(e: EntityShootBowEvent) {
         val shooter = e.entity as? LivingEntity ?: return
         val map = AttributeManager.getOrNull(shooter) ?: return
+
+        // 快照射击时的属性到弹射物上（防止切换武器后属性变化）
+        val snapshot = map.getAll()
+        e.projectile.setMetadata(SNAPSHOT_KEY,
+            org.bukkit.metadata.FixedMetadataValue(taboolib.platform.BukkitPlugin.getInstance(), snapshot))
 
         // 箭矢速度加成
         val arrowSpeed = map.get("arrow_speed")

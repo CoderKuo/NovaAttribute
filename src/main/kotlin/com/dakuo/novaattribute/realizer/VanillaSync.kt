@@ -83,6 +83,18 @@ object VanillaSync {
 
             val instance = entity.getAttribute(mapping.bukkit) ?: continue
 
+            // 首次同步时清理其他插件残留的数据
+            if (cached == null) {
+                // 重置基础值为原版默认（清理旧插件 setBaseValue 残留）
+                instance.baseValue = mapping.base
+                // 移除其他插件残留的 modifier
+                for (mod in instance.modifiers.toList()) {
+                    if (mod.uniqueId != MODIFIER_UUID) {
+                        try { instance.removeModifier(mod) } catch (_: Exception) {}
+                    }
+                }
+            }
+
             // max_health 特殊处理：同步前记录血量比例
             val healthRatio = if (mapping.novaId == "max_health" && entity.maxHealth > 0) {
                 entity.health / entity.maxHealth

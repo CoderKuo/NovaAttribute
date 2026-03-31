@@ -66,9 +66,15 @@ lore-format:
   # 属性名与数值的分隔符（正则）
   separator: "[：:] ?"
 
-# 装备条件（NBT NovaCondition 键，脚本判定）
+# 装备条件（NBT NovaCondition 键 或 Lore 关键词，脚本判定）
 condition:
   enabled: true
+  # Lore 条件关键词映射（关键词|别名，用正则分隔）
+  # 匹配格式: "关键词: 值"，如 "需要等级: 50"、"限制职业: 战士/法师"
+  lore-patterns:
+    level: "需要等级|等级限制|Lv\\.|Level"
+    class: "限制职业|需要职业|职业限制"
+    permission: "需要权限"
 
 # 内嵌条件（单属性行级条件，如 "暴击率: +25% / 等级>=50"）
 inline-condition:

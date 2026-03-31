@@ -1,0 +1,41 @@
+# NovaAttribute 属性公式
+#
+# 根据 PAPI 占位符动态计算属性值，每次属性刷新时自动注入。
+# 作为独立属性来源 "formula:__combined__" 参与汇总。
+#
+# 支持两种写法:
+#
+# 1. 简单表达式（一行）:
+#    属性ID: "表达式"
+#
+# 2. 复杂脚本（多行 NovaLang，必须 return 数值）:
+#    属性ID: |
+#      var level = toNumber(placeholder(entity, "%player_level%"))
+#      if (level > 50) { return level * 3 }
+#      return level * 2
+#
+# 脚本中可用变量:
+#   entity — 当前玩家（Player 对象）
+#
+# 脚本中可用函数:
+#   placeholder(entity, "%xxx%")      — PAPI 占位符
+#   toNumber(value)                   — 转数字
+#   getAttr(entity, "attrId")         — 获取其他属性值（注意避免循环依赖）
+#   以及所有 NovaAttribute 脚本 API 函数
+#
+# 示例（取消注释即可启用）:
+
+formulas: {}
+
+# formulas:
+#   max_health: "return 20 + toNumber(placeholder(entity, \"%player_level%\")) * 5"
+#   physical_damage: "return 1 + toNumber(placeholder(entity, \"%player_level%\")) * 2"
+#   physical_defense: "return toNumber(placeholder(entity, \"%player_level%\")) * 1.5"
+#
+#   # 复杂公式示例:
+#   # critical_chance: |
+#   #   var level = toNumber(placeholder(entity, "%player_level%"))
+#   #   var base = 0.05
+#   #   if (level >= 30) { base = 0.1 }
+#   #   if (level >= 60) { base = 0.15 }
+#   #   return base

@@ -42,7 +42,8 @@ object InlineConditionChecker {
         return try {
             val result = ScriptBridge.callFunction(SCRIPT_NAME, "check", entity, condition, source, item)
             result as? Boolean ?: true
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            taboolib.common.platform.function.warning("[NovaAttribute] Inline condition error for '$condition': ${e.message}")
             true
         }
     }

@@ -34,6 +34,8 @@ class AttributeMap(val entity: LivingEntity) {
 
     fun hasSource(source: String): Boolean = sources.containsKey(source)
 
+    fun getSourceData(source: String): AttributeData? = sources[source]?.copy()
+
     fun getSources(): Map<String, AttributeData> = sources.toMap()
 
     // ====== 属性查询 ======

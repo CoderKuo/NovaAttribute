@@ -7,12 +7,12 @@
 //   source   - 来源标识
 //   item     - 物品 (可能为 null)
 
-function check(entity, text, source, item) {
+fun check(entity, text, source, item) {
 
     // 等级条件: level>=N 或 等级>=N
     if (text.startsWith("level>=") || text.startsWith("等级>=")) {
         var parts = text.split(">=")
-        var required = toNumber(parts.get(1).trim())
+        var required = toNumber(parts[1].trim())
         if (isPlayer(entity)) {
             var level = placeholderDouble(entity, "%player_level%", 0)
             return level >= required
@@ -22,7 +22,8 @@ function check(entity, text, source, item) {
 
     // 职业条件: class:xxx 或 职业:xxx
     if (text.startsWith("class:") || text.startsWith("职业:")) {
-        var clazz = text.split(":").get(1).trim()
+        var parts = text.split(":")
+        var clazz = parts[1].trim()
         if (isPlayer(entity)) {
             return entity.hasPermission("nova.class." + clazz)
         }

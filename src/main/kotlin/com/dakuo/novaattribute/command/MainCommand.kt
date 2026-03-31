@@ -80,8 +80,9 @@ object MainCommand {
                     LoreGenerator.init(Configuration.loadFromFile(loreTemplateFile))
                 }
 
-                // 重载脚本
+                // 重载脚本和公式
                 ScriptManager.reload()
+                com.dakuo.novaattribute.feature.formula.FormulaManager.reload(dataFolder)
 
                 // 刷新所有在线玩家属性
                 Bukkit.getOnlinePlayers().forEach {

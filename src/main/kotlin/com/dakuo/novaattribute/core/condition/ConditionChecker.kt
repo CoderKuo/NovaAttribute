@@ -1,6 +1,7 @@
 package com.dakuo.novaattribute.core.condition
 
 import com.dakuo.novaattribute.script.ScriptBridge
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import taboolib.module.configuration.Configuration
@@ -9,7 +10,12 @@ import taboolib.module.nms.getItemTag
 
 /**
  * 装备条件检查（DESIGN.md 4.15）
- * 从 NBT NovaCondition 键读取条件 map，传给条件脚本判定
+ *
+ * 两种条件来源：
+ * 1. NBT: NovaCondition 键存储条件 map
+ * 2. Lore: 匹配 lore-patterns 中配置的关键词提取条件
+ *
+ * 两种来源会合并后传给条件脚本统一判定
  */
 object ConditionChecker {
 
@@ -17,40 +23,53 @@ object ConditionChecker {
     private const val SCRIPT_NAME = "condition_default"
 
     private var enabled = true
+    private val lorePatterns = mutableMapOf<String, String>()
 
     fun init(config: Configuration) {
         enabled = config.getBoolean("condition.enabled", true)
+
+        // 加载 Lore 条件关键词映射
+        lorePatterns.clear()
+        val section = config.getConfigurationSection("condition.lore-patterns")
+        if (section != null) {
+            for (key in section.getKeys(false)) {
+                lorePatterns[key] = section.getString(key) ?: ""
+            }
+        }
+        // 默认关键词（配置中未定义时使用）
+        if (lorePatterns.isEmpty()) {
+            lorePatterns["level"] = "需要等级|等级限制|Lv\\.|Level"
+            lorePatterns["class"] = "限制职业|需要职业|职业限制"
+            lorePatterns["permission"] = "需要权限"
+        }
     }
 
-    /**
-     * 检查玩家是否满足物品的装备条件
-     * @param player 玩家
-     * @param item 物品
-     * @param source 来源标识（如 "equipment:mainhand"）
-     * @return true=条件满足或无条件, false=条件不满足
-     */
     fun check(player: Player, item: ItemStack, source: String): Boolean {
         if (!enabled) return true
 
-        val conditions = readConditions(item) ?: return true
-        if (conditions.isEmpty()) return true
+        // 合并 NBT + Lore 条件
+        val nbtConditions = readConditionsFromNBT(item) ?: emptyMap()
+        val loreConditions = readConditionsFromLore(item)
+        val conditions = mutableMapOf<String, Any>()
+        conditions.putAll(loreConditions)
+        conditions.putAll(nbtConditions) // NBT 优先覆盖 Lore
 
-        // 检查脚本是否已加载
+        if (conditions.isEmpty()) return true
         if (!ScriptBridge.isLoaded(SCRIPT_NAME)) return true
 
         return try {
             val result = ScriptBridge.callFunction(SCRIPT_NAME, "check", player, conditions, item, source)
             result as? Boolean ?: true
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            taboolib.common.platform.function.warning("[NovaAttribute] Condition script error: ${e.message}")
             true
         }
     }
 
     /**
      * 从 NBT 读取条件 map
-     * NBT 格式: NovaCondition: { level: 50, class: "warrior/mage", source: "equipment:mainhand" }
      */
-    private fun readConditions(item: ItemStack): Map<String, Any>? {
+    private fun readConditionsFromNBT(item: ItemStack): Map<String, Any>? {
         val tag = try {
             item.getItemTag()
         } catch (_: Exception) {
@@ -71,6 +90,39 @@ object ConditionChecker {
                 ItemTagType.FLOAT -> result[key] = entry.asFloat().toDouble()
                 ItemTagType.LONG -> result[key] = entry.asLong()
                 else -> result[key] = entry.asString()
+            }
+        }
+        return result
+    }
+
+    /**
+     * 从 Lore 读取条件
+     *
+     * Lore 格式示例:
+     *   §7需要等级: 50
+     *   §7限制职业: 战士/法师
+     *   §7需要权限: vip.sword
+     */
+    private fun readConditionsFromLore(item: ItemStack): Map<String, Any> {
+        val result = mutableMapOf<String, Any>()
+        val meta = item.itemMeta ?: return result
+        val lore = meta.lore ?: return result
+
+        for (line in lore) {
+            val stripped = ChatColor.stripColor(line)?.trim() ?: continue
+            for ((condKey, patternStr) in lorePatterns) {
+                val patterns = patternStr.split("|")
+                for (pattern in patterns) {
+                    val regex = Regex("(?:$pattern)[：:\\s]*(.*)")
+                    val match = regex.find(stripped) ?: continue
+                    val value = match.groupValues[1].trim()
+                    if (value.isNotEmpty()) {
+                        // 尝试转数字，失败则存字符串
+                        val numValue = value.toDoubleOrNull()
+                        result[condKey] = numValue ?: value
+                    }
+                    break
+                }
             }
         }
         return result

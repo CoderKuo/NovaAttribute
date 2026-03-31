@@ -1,8 +1,11 @@
 package com.dakuo.novaattribute.combat
 
 import com.dakuo.novaattribute.api.event.NovaAttributeDamageEvent
+import com.dakuo.novaattribute.core.attribute.AttributeData
+import com.dakuo.novaattribute.core.attribute.AttributeManager
 import com.dakuo.novaattribute.core.attribute.AttributeTrigger
 import com.dakuo.novaattribute.combat.DamageIndicator
+import com.dakuo.novaattribute.listener.MechanicsListener
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
@@ -50,6 +53,24 @@ object DamageListener {
         victim.removeMetadata(CTX_KEY, BukkitPlugin.getInstance())
 
         if (e.isCancelled) return
+
+        // ⓪ 弹射物属性快照：用射击时的属性替换当前属性（防止切换武器后属性变化）
+        var snapshotRestoreData: AttributeData? = null
+        if (ctx.isProjectile && e.damager is Projectile) {
+            val snapshot = MechanicsListener.getProjectileSnapshot(e.damager)
+            if (snapshot != null) {
+                val attackerMap = AttributeManager.get(ctx.attacker)
+                // 保存当前主手来源用于恢复
+                snapshotRestoreData = attackerMap.getSourceData("equipment:mainhand")
+                // 用快照构建临时来源替换主手
+                val snapshotData = AttributeData()
+                for ((attrId, value) in snapshot) {
+                    snapshotData.set(attrId, value)
+                }
+                attackerMap.update("equipment:mainhand", snapshotData)
+                attackerMap.recalculate()
+            }
+        }
 
         // ① 调用 damage.nova 计算基础伤害
         ctx.finalDamage = CombatHandler.calculateDamage(ctx)
@@ -100,6 +121,18 @@ object DamageListener {
         // ⑦ 如果击杀，执行 KILL 类属性脚本
         if (victim.health - ctx.finalDamage <= 0) {
             CombatHandler.executeAttributeScripts(ctx, AttributeTrigger.KILL)
+        }
+
+        // ⑧ 恢复弹射物快照前的属性
+        if (snapshotRestoreData != null) {
+            val attackerMap = AttributeManager.get(ctx.attacker)
+            attackerMap.update("equipment:mainhand", snapshotRestoreData)
+            attackerMap.recalculate()
+        } else if (ctx.isProjectile && e.damager is Projectile && MechanicsListener.getProjectileSnapshot(e.damager) != null) {
+            // 快照前主手为空（弓没属性），恢复为移除主手来源
+            val attackerMap = AttributeManager.get(ctx.attacker)
+            attackerMap.remove("equipment:mainhand")
+            attackerMap.recalculate()
         }
     }
 

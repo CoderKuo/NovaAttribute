@@ -29,12 +29,15 @@ object EquipmentListener {
     @SubscribeEvent
     fun onInventoryClick(e: InventoryClickEvent) {
         val player = e.whoClicked as? Player ?: return
-        if (e.slotType == InventoryType.SlotType.ARMOR ||
-            e.slotType == InventoryType.SlotType.QUICKBAR ||
-            e.click.isShiftClick
-        ) {
-            scheduleRefresh(player)
-        }
+        // 任何可能影响装备栏的点击都触发刷新
+        // 包括：盔甲栏、快捷栏、Shift点击、数字键切换、拖拽等
+        scheduleRefresh(player)
+    }
+
+    @SubscribeEvent
+    fun onInventoryClose(e: org.bukkit.event.inventory.InventoryCloseEvent) {
+        val player = e.player as? Player ?: return
+        scheduleRefresh(player)
     }
 
     @SubscribeEvent

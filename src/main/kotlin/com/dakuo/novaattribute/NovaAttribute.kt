@@ -76,6 +76,7 @@ object NovaAttribute : Plugin() {
         releaseResourceFile("conditions/default.nova", replace = false)
         releaseResourceFile("conditions/inline.nova", replace = false)
         releaseResourceFile("lore-template.yml", replace = false)
+        releaseResourceFile("formulas.yml", replace = false)
     }
 
     override fun onEnable() {
@@ -93,6 +94,9 @@ object NovaAttribute : Plugin() {
         // 3. 初始化脚本系统
         ScriptManager.init(dataFolder)
         ScriptManager.loadAll()
+
+        // 3.5 加载属性公式
+        com.dakuo.novaattribute.feature.formula.FormulaManager.init(dataFolder)
 
         // 4. 启动 Buff 过期检查
         BuffManager.startTickTask()
