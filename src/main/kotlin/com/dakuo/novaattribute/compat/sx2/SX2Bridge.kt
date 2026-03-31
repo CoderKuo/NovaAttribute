@@ -41,7 +41,9 @@ object SX2Bridge {
 
     fun disable() {
         for (attr in SubAttribute.getAttributes()) {
-            try { attr.onDisable() } catch (_: Exception) {}
+            try { attr.onDisable() } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute-SX2] onDisable error for '${attr.name}': ${e.message}")
+            }
         }
     }
 
@@ -67,7 +69,9 @@ object SX2Bridge {
         AttributeRegistry.register(attr)
 
         if (initialized) {
-            try { sub.onEnable() } catch (_: Exception) {}
+            try { sub.onEnable() } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute-SX2] onEnable error for '${sub.name}': ${e.message}")
+            }
         }
     }
 
@@ -129,7 +133,8 @@ object SX2Bridge {
             Bukkit.getPluginManager().callEvent(sxEvent)
             // 事件处理后再次同步
             ctx.finalDamage = damageData.damage
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            taboolib.common.platform.function.warning("[NovaAttribute-SX2] SXDamageEvent error: ${e.message}")
         }
     }
 
@@ -143,7 +148,9 @@ object SX2Bridge {
             if (!attr.containsType(AttributeType.UPDATE)) continue
             try {
                 attr.eventMethod(entityData.getValues(attr), updateData)
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute-SX2] UPDATE attribute '${attr.name}' error: ${e.message}")
+            }
         }
     }
 

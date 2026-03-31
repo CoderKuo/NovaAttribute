@@ -115,7 +115,8 @@ object LoreReader {
             val pattern = attr.lorePattern ?: continue
             val matchResult = try {
                 RuRegex.match(pattern, stripped)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute] Lore pattern error for '${attr.id}': ${e.message}")
                 continue
             } ?: continue
 

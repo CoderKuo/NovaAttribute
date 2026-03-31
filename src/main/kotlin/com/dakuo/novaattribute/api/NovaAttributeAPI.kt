@@ -152,7 +152,9 @@ object NovaAttributeAPI {
                 val result = ScriptBridge.callFunction("combat_power", "calculate", entity)
                 val power = (result as? Number)?.toDouble()
                 if (power != null && power >= 0) return power
-            } catch (_: Exception) {}
+            } catch (e: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute] Combat power script error: ${e.message}")
+            }
         }
 
         // 回退：使用属性系数线性计算

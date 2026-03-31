@@ -210,7 +210,8 @@ object ScriptBinding {
             try {
                 val s = Sound.valueOf((sound as String).uppercase())
                 e.world.playSound(e.location, s, (volume as Number).toFloat(), (pitch as Number).toFloat())
-            } catch (_: Exception) {
+            } catch (ex: Exception) {
+                taboolib.common.platform.function.warning("[NovaAttribute] playSound error: ${ex.message}")
             }
             null
         }
@@ -374,7 +375,8 @@ object ScriptBinding {
                         val scripts = com.dakuo.novascript.NovaScriptAPI.getScripts("NovaAttribute")
                         val ns = scripts.firstOrNull()?.let { "NovaAttribute:$it" } ?: return@submit
                         com.dakuo.novascript.NovaScriptAPI.invokeCallback(ns, callback)
-                    } catch (_: Exception) {
+                    } catch (ex: Exception) {
+                        taboolib.common.platform.function.warning("[NovaAttribute] delay callback error: ${ex.message}")
                     }
                 }
             }

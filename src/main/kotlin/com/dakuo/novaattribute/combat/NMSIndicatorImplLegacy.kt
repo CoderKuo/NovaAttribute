@@ -29,7 +29,8 @@ class NMSIndicatorImplLegacy : NMSIndicator() {
             val f = net.minecraft.server.v1_12_R1.Entity::class.java.getDeclaredField("id")
             f.isAccessible = true
             f.setInt(armorStand, entityId)
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            taboolib.common.platform.function.warning("[NovaAttribute] Failed to set entity ID via reflection: ${e.message}")
         }
 
         // 1.12~1.16 使用 PacketPlayOutSpawnEntityLiving
