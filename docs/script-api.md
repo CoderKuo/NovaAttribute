@@ -11,6 +11,14 @@
 | `getAttrMin(entity, attrId)` | Double | 获取范围属性最小值 |
 | `getAttrMax(entity, attrId)` | Double | 获取范围属性最大值 |
 
+## 类型转换
+
+| 函数 | 返回 | 说明 |
+|------|------|------|
+| `toNumber(value)` | Double | 转数字（String/Number → Double） |
+| `toFloat(value)` | Float | 转 float（调用 Java 方法需要 float 参数时使用） |
+| `toInt(value)` | Int | 转整数 |
+
 ## 实体工具
 
 | 函数 | 返回 | 说明 |
@@ -104,6 +112,14 @@ fun execute(attacker, victim, ctx, attrValue) {
 | `playSound(entity, sound, volume, pitch)` | 播放音效 |
 | `placeholder(player, text)` | PAPI 占位符替换 |
 | `placeholderDouble(player, text, default)` | PAPI 返回数值 |
+
+## MythicMobs
+
+| 函数 | 返回 | 说明 |
+|------|------|------|
+| `getMobLevel(entity)` | Double | MM 怪物等级（非 MM 怪返回 0） |
+| `getMobId(entity)` | String? | MM 怪物 ID（非 MM 怪返回 null） |
+| `isMythicMob(entity)` | Boolean | 是否为 MM 怪物 |
 
 ## 物品构建
 

@@ -80,3 +80,28 @@ ATTACK 和 DEFENSE 脚本按 `priority` 升序执行：
 // 闪避触发后，暴击/反伤/格挡都可以检查并跳过
 if (isTriggered(ctx, "dodge")) { return null }
 ```
+
+## 弹射物属性快照
+
+射箭时插件会快照攻击者当前的全部属性值存到箭矢 metadata 上。箭命中时使用**射击瞬间的属性**计算伤害，而不是命中时手持物品的属性。
+
+这防止了"射弓后切换高攻武器让箭矢携带武器属性"的 exploit。
+
+## 自定义伤害显示（onDisplay 钩子）
+
+在 `damage.nova` 中定义 `onDisplay` 函数可替代内置伤害指示器。如果该函数存在则调用，不存在则使用默认 `DamageIndicator`。
+
+```javascript
+// damage.nova 末尾追加
+var CombatSystemApi = Java.type("pers.floret.combatsystem.api.CombatSystemApi")
+
+fun onDisplay(attacker, victim, ctx) {
+    if (!isPlayer(attacker)) { return null }
+    var damage = ctx.getDamage()
+    var loc = victim.getLocation().add(random(-1.0, 1.0), random(1.0, 2.0), random(-1.0, 1.0))
+    var text = "§c-" + toInt(damage)
+    CombatSystemApi.create(attacker, 25, loc, text, true, toFloat(0.4), toFloat(0.4))
+}
+```
+
+适用于集成 DragonCore 伤害显示、CombatSystem 等第三方插件。

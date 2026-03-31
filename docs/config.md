@@ -55,12 +55,18 @@ lore-format:
 
 ```yaml
 condition:
-  enabled: true              # 装备条件（NBT NovaCondition）
+  enabled: true              # 装备条件（NBT + Lore）
+  lore-patterns:             # Lore 条件关键词（正则，|分隔别名）
+    level: "需要等级|等级限制|Lv\\.|Level"
+    class: "限制职业|需要职业|职业限制"
+    permission: "需要权限"
 
 inline-condition:
   enabled: true              # 内嵌条件
   lore-separator: " / "      # Lore 中条件分隔符
 ```
+
+Lore 条件匹配格式：`关键词: 值`（如 `需要等级: 50`）。详见 [条件系统](conditions.md)。
 
 ## 伤害指示器
 

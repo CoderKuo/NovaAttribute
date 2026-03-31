@@ -49,7 +49,8 @@
 | [伤害计算](docs/damage.md) | 伤害公式和战斗流程 |
 | [Buff 系统](docs/buff.md) | Buff 添加、叠加、持久化 |
 | [触发器系统](docs/triggers.md) | PERIODIC / CUSTOM 触发器和事件绑定 |
-| [条件系统](docs/conditions.md) | 装备条件和内嵌条件 |
+| [条件系统](docs/conditions.md) | 装备条件（NBT + Lore）和内嵌条件 |
+| [属性公式](docs/formulas.md) | 基于 PAPI 占位符的动态属性计算 |
 | [开发者 API](docs/developer-api.md) | Java/Kotlin API 和 Provider 接口 |
 | [MythicMobs 兼容](docs/mythicmobs.md) | 怪物属性、自定义技能、掉落增强 |
 | [命令参考](docs/commands.md) | 所有命令及用法 |
