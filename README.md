@@ -43,15 +43,15 @@
 
 | 文档 | 说明 |
 |------|------|
-| [1. 快速入门](docs/1-getting-started.md) | 安装、配置、第一个自定义属性 |
-| [2. 属性配置](docs/2-attributes.md) | 属性定义 YAML 格式详解 |
-| [3. 脚本 API](docs/3-script-api.md) | NovaLang 脚本可用函数一览 |
-| [4. 伤害计算](docs/4-damage.md) | 伤害公式和战斗流程 |
-| [5. Buff 系统](docs/5-buff.md) | Buff 添加、叠加、持久化 |
-| [6. 触发器系统](docs/6-triggers.md) | PERIODIC / CUSTOM 触发器和事件绑定 |
-| [7. 条件系统](docs/7-conditions.md) | 装备条件（NBT + Lore）和内嵌条件 |
-| [8. 属性公式](docs/8-formulas.md) | 基于 PAPI 占位符的动态属性计算 |
-| [9. MythicMobs 兼容](docs/9-mythicmobs.md) | 怪物属性、自定义技能、掉落增强 |
+| [1. 快速入门](docs/01-getting-started.md) | 安装、配置、第一个自定义属性 |
+| [2. 属性配置](docs/02-attributes.md) | 属性定义 YAML 格式详解 |
+| [3. 脚本 API](docs/03-script-api.md) | NovaLang 脚本可用函数一览 |
+| [4. 伤害计算](docs/04-damage.md) | 伤害公式和战斗流程 |
+| [5. Buff 系统](docs/05-buff.md) | Buff 添加、叠加、持久化 |
+| [6. 触发器系统](docs/06-triggers.md) | PERIODIC / CUSTOM 触发器和事件绑定 |
+| [7. 条件系统](docs/07-conditions.md) | 装备条件（NBT + Lore）和内嵌条件 |
+| [8. 属性公式](docs/08-formulas.md) | 基于 PAPI 占位符的动态属性计算 |
+| [9. MythicMobs 兼容](docs/09-mythicmobs.md) | 怪物属性、自定义技能、掉落增强 |
 | [10. 开发者 API](docs/10-developer-api.md) | Java/Kotlin API 和 Provider 接口 |
 | [11. 命令参考](docs/11-commands.md) | 所有命令及用法 |
 | [12. 配置参考](docs/12-config.md) | config.yml 完整配置项说明 |
