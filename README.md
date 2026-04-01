@@ -55,6 +55,7 @@
 | [10. 开发者 API](docs/10-developer-api.md) | Java/Kotlin API 和 Provider 接口 |
 | [11. 命令参考](docs/11-commands.md) | 所有命令及用法 |
 | [12. 配置参考](docs/12-config.md) | config.yml 完整配置项说明 |
+| [14. 占位符](docs/14-placeholders.md) | PlaceholderAPI 占位符一览 |
 
 ## 命令
 

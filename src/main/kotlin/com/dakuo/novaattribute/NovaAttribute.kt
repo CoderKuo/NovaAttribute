@@ -77,6 +77,7 @@ object NovaAttribute : Plugin() {
         releaseResourceFile("conditions/inline.nova", replace = false)
         releaseResourceFile("lore-template.yml", replace = false)
         releaseResourceFile("formulas.yml", replace = false)
+        releaseResourceFile("gui/panel.yml", replace = false)
     }
 
     override fun onEnable() {

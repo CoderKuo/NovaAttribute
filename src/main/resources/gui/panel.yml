@@ -1,0 +1,92 @@
+# 属性面板 GUI 配置
+# 布局中每个字符对应一个槽位类型
+
+title: '§0{player} 的属性'
+
+layout:
+  - 'XXXXXXXXX'
+  - 'XAAAAAAAX'
+  - 'XAAAAAAAX'
+  - 'XAAAAAAAX'
+  - 'XAAAAAAAX'
+  - 'XXX<X>XXX'
+
+slots:
+  X:
+    type: 'frame'
+    item:
+      material: 'gray_stained_glass_pane'
+      name: ' '
+  A:
+    type: 'content'
+  '<':
+    type: 'prev-page'
+    item:
+      material: 'arrow'
+      name: '§a上一页'
+    empty:
+      material: 'gray_stained_glass_pane'
+      name: ' '
+  '>':
+    type: 'next-page'
+    item:
+      material: 'arrow'
+      name: '§a下一页'
+    empty:
+      material: 'gray_stained_glass_pane'
+      name: ' '
+
+# 属性物品模板
+attribute-item:
+  # 默认材质（有值/无值）
+  material: 'lime_dye'
+  zero-material: 'gray_dye'
+  # 显示名格式
+  name: '§e{attr_name}'
+  # Lore 模板（可用占位符: {id} {value} {min} {max} {base} {default} {attr_name}）
+  lore:
+    - '§7ID: §f{id}'
+    - '§7当前值: §f{value}'
+    - '§7基础值: §f{base}'
+    - ''
+    - '§e左键 §7查看来源明细'
+
+# 属性图标映射（可选，完整 ItemStack 配置）
+# 支持精确匹配属性ID 或 前缀匹配（如 "fire_" 匹配所有火焰属性）
+# 可配置完整的物品属性（material/name/lore/custom-model-data 等）
+# name 和 lore 中同样支持 {id} {value} {attr_name} 等占位符
+#
+# attribute-icons:
+#   physical_damage:
+#     material: 'iron_sword'
+#     custom-model-data: 10001
+#   magic_damage:
+#     material: 'blaze_rod'
+#     name: '§9{attr_name}'
+#     lore:
+#       - '§7魔法系属性'
+#       - '§7当前值: §f{value}'
+#   max_health:
+#     material: 'red_dye'
+#   fire_:
+#     material: 'blaze_powder'
+#     custom-model-data: 20001
+#   ice_:
+#     material: 'blue_ice'
+attribute-icons: {}
+
+# 来源明细页标题
+detail-title: '§0{attr_name} 的来源'
+
+# 来源物品图标映射（前缀 → 材质）
+source-icons:
+  equipment: 'diamond_chestplate'
+  buff: 'potion'
+  formula: 'experience_bottle'
+  mythicmobs: 'zombie_head'
+  default: 'paper'
+
+# 返回按钮
+back-button:
+  material: 'barrier'
+  name: '§c返回'

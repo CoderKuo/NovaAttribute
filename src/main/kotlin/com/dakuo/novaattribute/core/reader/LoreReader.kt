@@ -267,14 +267,35 @@ object LoreReader {
     private fun mergeValues(result: AttributeData, attrId: String, values: List<Double>) {
         val existing = result.get(attrId)
         if (existing != null) {
+            // 统一为相同长度再相加
+            // 固定值 [10000] 合并到范围值 [1, 2] 时，展开为 [10000, 10000]
+            // 范围值 [1, 2] 合并到固定值 [10000] 时，展开为 [10000, 10000]
+            val targetLen = maxOf(existing.size, values.size)
+            val a = expandToLength(existing, targetLen)
+            val b = expandToLength(values, targetLen)
             val merged = mutableListOf<Double>()
-            val maxLen = maxOf(existing.size, values.size)
-            for (i in 0 until maxLen) {
-                merged.add((existing.getOrElse(i) { 0.0 }) + (values.getOrElse(i) { 0.0 }))
+            for (i in 0 until targetLen) {
+                merged.add(a[i] + b[i])
             }
             result.set(attrId, merged)
+            // 任一方是范围值就标记
+            if (targetLen > 1) result.markRange(attrId)
         } else {
             result.set(attrId, values)
         }
+    }
+
+    /**
+     * 将值列表展开到指定长度
+     * 单值 [100] 展开为 [100, 100]（固定值同时作为 min 和 max）
+     */
+    private fun expandToLength(values: List<Double>, targetLen: Int): List<Double> {
+        if (values.size >= targetLen) return values
+        val result = values.toMutableList()
+        val fill = values.last() // 用最后一个值填充
+        while (result.size < targetLen) {
+            result.add(fill)
+        }
+        return result
     }
 }

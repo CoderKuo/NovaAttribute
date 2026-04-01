@@ -44,6 +44,18 @@ object NovaPlaceholder : PlaceholderExpansion {
                 formatValue(attrId, map.getBase(attrId))
             }
 
+            // %nova_min_<attrId>%
+            args.startsWith("min_") -> {
+                val attrId = args.removePrefix("min_")
+                formatValue(attrId, map.getMin(attrId))
+            }
+
+            // %nova_max_<attrId>%
+            args.startsWith("max_") -> {
+                val attrId = args.removePrefix("max_")
+                formatValue(attrId, map.getMax(attrId))
+            }
+
             // %nova_buff_<id>_remaining%
             args.startsWith("buff_") && args.endsWith("_remaining") -> {
                 val buffId = args.removePrefix("buff_").removeSuffix("_remaining")
